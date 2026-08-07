@@ -1,11 +1,11 @@
-# Enable stateless CSRF protection for forms and logins/logouts
+# Session-based CSRF for Symfony forms and login (no Stimulus required on auth pages).
 framework:
     form:
         csrf_protection:
             token_id: submit
+            field_attr: []
 
     csrf_protection:
-        stateless_token_ids:
-            - submit
-            - authenticate
-            - logout
+        enabled: true
+        # Empty: use classic session tokens so HTML forms work without Stimulus JS.
+        stateless_token_ids: []

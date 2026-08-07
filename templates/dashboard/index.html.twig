@@ -1,0 +1,257 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <div class="row g-6 mb-6">
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="d-block mb-1 text-body-secondary">Sociétés</span>
+              <h3 class="card-title mb-0">{{ stats.societes }}</h3>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-primary">
+                <i class="icon-base bx bx-buildings icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="d-block mb-1 text-body-secondary">Projets</span>
+              <h3 class="card-title mb-0">{{ stats.projets }}</h3>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-info">
+                <i class="icon-base bx bx-briefcase icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="d-block mb-1 text-body-secondary">Factures</span>
+              <h3 class="card-title mb-0">{{ stats.factures }}</h3>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-warning">
+                <i class="icon-base bx bx-receipt icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="d-block mb-1 text-body-secondary">CA total</span>
+              <h3 class="card-title mb-0">{{ stats.montant_total|number_format(2, ',', ' ') }} €</h3>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-success">
+                <i class="icon-base bx bx-euro icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-6 mb-6">
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="card-info">
+              <p class="card-text text-body-secondary mb-1">Offres actives</p>
+              <h4 class="card-title mb-0">{{ stats.offres_actives }}</h4>
+            </div>
+            <div class="card-icon">
+              <span class="badge bg-label-secondary rounded p-2">
+                <i class="icon-base bx bx-file icon-md"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div class="card-info">
+              <p class="card-text text-body-secondary mb-1">Utilisateurs</p>
+              <h4 class="card-title mb-0">{{ stats.utilisateurs }}</h4>
+            </div>
+            <div class="card-icon">
+              <span class="badge bg-label-primary rounded p-2">
+                <i class="icon-base bx bx-user icon-md"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 col-sm-12">
+      <div class="card h-100">
+        <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            <h5 class="mb-1">Bienvenue{% if app.user %}, {{ app.user.prenom }}{% endif %}</h5>
+            <p class="mb-0 text-body-secondary">Vue d'ensemble de votre activité de facturation — {{ annee }}</p>
+          </div>
+          <a href="javascript:void(0);" class="btn btn-primary">Nouvelle facture</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-6 mb-6">
+    <div class="col-lg-8">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="card-title mb-0">Chiffre d'affaires mensuel</h5>
+            <small class="text-body-secondary">Montants facturés — {{ annee }}</small>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="chartCaMensuel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Factures par statut</h5>
+          <small class="text-body-secondary">Répartition actuelle</small>
+        </div>
+        <div class="card-body">
+          <div id="chartFacturesStatut"></div>
+          {% if factures_par_statut is empty %}
+            <p class="text-center text-body-secondary mb-0 mt-3">Aucune facture pour le moment</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-6">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Dernières factures</h5>
+        </div>
+        <div class="table-responsive text-nowrap">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>Projet</th>
+                <th>Montant</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+              {% for facture in factures_recentes %}
+                <tr>
+                  <td>{{ "%02d"|format(facture.mois) }}/{{ facture.annee }}</td>
+                  <td>{{ facture.projet.nom }}</td>
+                  <td>{{ facture.montantTotal|number_format(2, ',', ' ') }} €</td>
+                  <td>
+                    {% set statut = facture.statut|lower %}
+                    {% if 'valid' in statut or 'pay' in statut %}
+                      {% set badge = 'success' %}
+                    {% elseif 'attente' in statut or 'brouillon' in statut or 'draft' in statut %}
+                      {% set badge = 'warning' %}
+                    {% elseif 'annul' in statut or 'refus' in statut %}
+                      {% set badge = 'danger' %}
+                    {% else %}
+                      {% set badge = 'primary' %}
+                    {% endif %}
+                    <span class="badge bg-label-{{ badge }}">{{ facture.statut }}</span>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="4" class="text-center text-body-secondary py-4">Aucune facture enregistrée</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Projets récents</h5>
+        </div>
+        <div class="table-responsive text-nowrap">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Projet</th>
+                <th>Société</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+              {% for projet in projets_recents %}
+                <tr>
+                  <td>
+                    <div class="fw-medium">{{ projet.nom }}</div>
+                    <small class="text-body-secondary">{{ projet.numeroSo }}</small>
+                  </td>
+                  <td>{{ projet.societe.nom }}</td>
+                  <td><span class="badge bg-label-info">{{ projet.statut }}</span></td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="3" class="text-center text-body-secondary py-4">Aucun projet enregistré</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  <script>
+    window.dashboardCharts = {
+      ca: {
+        labels: {{ montants_mensuels.labels|json_encode|raw }},
+        values: {{ montants_mensuels.values|json_encode|raw }}
+      },
+      facturesStatut: {
+        labels: {{ factures_statut_labels|json_encode|raw }},
+        values: {{ factures_statut_values|json_encode|raw }}
+      }
+    };
+  </script>
+  <script src="{{ asset('assets/js/dashboard-app.js') }}"></script>
+{% endblock %}

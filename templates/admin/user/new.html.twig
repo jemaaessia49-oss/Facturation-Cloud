@@ -1,0 +1,92 @@
+<!doctype html>
+<html
+  lang="fr"
+  class="layout-wide customizer-hide"
+  data-assets-path="{{ asset('assets/') }}"
+  data-template="vertical-menu-template-free">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Nouvel utilisateur - Facturation Cloud</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/page-auth.css') }}" />
+
+    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('assets/js/config.js') }}"></script>
+  </head>
+
+  <body>
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <div class="card px-sm-6 px-0">
+            <div class="card-body">
+              <div class="app-brand justify-content-center">
+                <a href="{{ path('app_dashboard') }}" class="app-brand-link gap-2">
+                  <span class="app-brand-text demo text-heading fw-bold">Facturation Cloud</span>
+                </a>
+              </div>
+
+              <h4 class="mb-1">Nouvel utilisateur 👤</h4>
+              <p class="mb-6">Créez un compte administrateur ou consultant</p>
+
+              {{ form_start(form, {attr: {class: 'mb-6'}}) }}
+                <div class="mb-6">
+                  {{ form_label(form.prenom, 'Prénom') }}
+                  {{ form_widget(form.prenom, {attr: {class: 'form-control', placeholder: 'Entrez le prénom'}}) }}
+                  {{ form_errors(form.prenom) }}
+                </div>
+
+                <div class="mb-6">
+                  {{ form_label(form.nom, 'Nom') }}
+                  {{ form_widget(form.nom, {attr: {class: 'form-control', placeholder: 'Entrez le nom'}}) }}
+                  {{ form_errors(form.nom) }}
+                </div>
+
+                <div class="mb-6">
+                  {{ form_label(form.email, 'Email') }}
+                  {{ form_widget(form.email, {attr: {class: 'form-control', placeholder: 'Entrez l\'email'}}) }}
+                  {{ form_errors(form.email) }}
+                </div>
+
+                <div class="mb-6">
+                  {{ form_label(form.role, 'Rôle') }}
+                  {{ form_widget(form.role, {attr: {class: 'form-select'}}) }}
+                  {{ form_errors(form.role) }}
+                </div>
+
+                <div class="mb-6 form-password-toggle">
+                  {{ form_label(form.plainPassword, 'Mot de passe') }}
+                  <div class="input-group input-group-merge">
+                    {{ form_widget(form.plainPassword, {attr: {class: 'form-control'}}) }}
+                    <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
+                  </div>
+                  {{ form_errors(form.plainPassword) }}
+                </div>
+
+                <div class="mb-6 d-flex gap-2">
+                  <button class="btn btn-primary d-grid w-100" type="submit">Créer l'utilisateur</button>
+                </div>
+              {{ form_end(form) }}
+
+              <p class="text-center">
+                <a href="{{ path('app_admin_user_index') }}">
+                  <i class="icon-base bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+                  Retour à la liste des utilisateurs
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
