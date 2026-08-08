@@ -1,0 +1,23 @@
+{% extends "layouts/admin.html.twig" %}
+
+{% block title %}Modifier {{ projet.nom }}{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Modifier le projet</h5>
+    </div>
+    <div class="card-body">
+      {{ form_start(form) }}
+        <div class="mb-4">{{ form_row(form.societe) }}</div>
+        <div class="mb-4">{{ form_row(form.numeroSo) }}</div>
+        <div class="mb-4">{{ form_row(form.nom) }}</div>
+        <div class="mb-4">{{ form_row(form.dateDebut) }}</div>
+        <div class="mb-4">{{ form_row(form.statut) }}</div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ path('app_admin_projet_index') }}" class="btn btn-outline-secondary">Annuler</a>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

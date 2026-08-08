@@ -1,0 +1,55 @@
+{% extends "layouts/admin.html.twig" %}
+
+{% block title %}Projets{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Projets</h5>
+      <a href="{{ path('app_admin_projet_new') }}" class="btn btn-primary">
+        <i class="icon-base bx bx-plus me-1"></i> Nouveau projet
+      </a>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Numero SO</th>
+            <th>Nom du projet</th>
+            <th>Societe</th>
+            <th>Date de debut</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for projet in projets %}
+            <tr>
+              <td>{{ projet.numeroSo }}</td>
+              <td>{{ projet.nom }}</td>
+              <td>{{ projet.societe.nom }}</td>
+              <td>{{ projet.dateDebut ? projet.dateDebut|date('d/m/Y') : '-' }}</td>
+              <td><span class="badge bg-label-info">{{ projet.statut }}</span></td>
+              <td>
+                <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-sm btn-icon">
+                  <i class="icon-base bx bx-edit"></i>
+                </a>
+                <form method="post" action="{{ path('app_admin_projet_delete', {id: projet.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce projet ?');">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete_projet_' ~ projet.id) }}">
+                  <button type="submit" class="btn btn-sm btn-icon text-danger">
+                    <i class="icon-base bx bx-trash"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-body-secondary py-4">Aucun projet enregistre</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
