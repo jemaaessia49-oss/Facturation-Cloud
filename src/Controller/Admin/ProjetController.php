@@ -60,12 +60,21 @@ class ProjetController extends AbstractController
 
             $this->addFlash('success', 'Projet modifie avec succes.');
 
-            return $this->redirectToRoute('app_admin_projet_index');
+            return $this->redirectToRoute('app_admin_projet_edit', ['id' => $projet->getId()]);
+        }
+
+        $offreActive = null;
+        foreach ($projet->getOffreFinancieres() as $offre) {
+            if ($offre->isActive()) {
+                $offreActive = $offre;
+                break;
+            }
         }
 
         return $this->render('admin/projet/edit.html.twig', [
             'form' => $form,
             'projet' => $projet,
+            'offre_active' => $offreActive,
         ]);
     }
 

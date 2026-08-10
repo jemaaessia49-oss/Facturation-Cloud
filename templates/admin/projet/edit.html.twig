@@ -3,7 +3,7 @@
 {% block title %}Modifier {{ projet.nom }}{% endblock %}
 
 {% block content %}
-  <div class="card">
+  <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title mb-0">Modifier le projet</h5>
     </div>
@@ -16,8 +16,62 @@
         <div class="mb-4">{{ form_row(form.statut) }}</div>
 
         <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a href="{{ path('app_admin_projet_index') }}" class="btn btn-outline-secondary">Annuler</a>
+        <a href="{{ path('app_admin_projet_index') }}" class="btn btn-outline-secondary">Retour a la liste</a>
       {{ form_end(form) }}
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Offre financiere</h5>
+      <a href="{{ path('app_admin_offre_import', {id: projet.id}) }}" class="btn btn-primary btn-sm">
+        <i class="icon-base bx bx-upload me-1"></i>
+        {{ offre_active ? 'Changer l\'offre financiere' : 'Importer une offre financiere' }}
+      </a>
+    </div>
+
+    {% if offre_active %}
+      <div class="card-body pb-0">
+        <p class="text-body-secondary mb-2">
+          Version {{ offre_active.version }} — importee le {{ offre_active.dateImport|date('d/m/Y H:i') }}
+          depuis <strong>{{ offre_active.fichierSource }}</strong>
+        </p>
+      </div>
+
+      <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Ressource</th>
+              <th>Quantite</th>
+              <th>Unite</th>
+              <th>Prix unitaire</th>
+              <th>Type de service</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            {% for ligne in offre_active.ligneOffres %}
+              <tr>
+                <td>{{ ligne.ressource }}</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.unite }}</td>
+                <td>{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} EUR</td>
+                <td>{{ ligne.typeService ?? '-' }}</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-body-secondary py-4">Aucune ligne dans cette offre</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="card-body">
+        <p class="text-center text-body-secondary py-4 mb-0">
+          Aucune offre financiere importee pour ce projet.
+        </p>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

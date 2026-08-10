@@ -1,0 +1,23 @@
+{% extends "layouts/admin.html.twig" %}
+
+{% block title %}Importer l'offre financiere{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Importer l'offre financiere - {{ projet.nom }}</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-body-secondary">
+        Le fichier Excel doit contenir une ligne d'en-tete suivie des colonnes : Ressource, Quantite, Unite, Prix unitaire, Type de service.
+      </p>
+
+      {{ form_start(form, {attr: {enctype: 'multipart/form-data'}}) }}
+        <div class="mb-4">{{ form_row(form.fichier) }}</div>
+
+        <button type="submit" class="btn btn-primary">Importer</button>
+        <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}
