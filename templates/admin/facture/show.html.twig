@@ -19,6 +19,10 @@
         </small>
       </div>
       <div class="d-flex gap-2">
+        <a href="{{ path('app_admin_facture_pdf', {id: projet.id, annee: annee, mois: mois}) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+          <i class="icon-base bx bx-download me-1"></i> Télécharger le PDF
+        </a>
+        <a href="{{ path('app_admin_offre_import', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm">Voir l'offre financière</a>
         <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm">Retour au projet</a>
       </div>
     </div>
@@ -40,7 +44,7 @@
               <tr>
                 <td>{{ ligne.ressource }}</td>
                 <td>{{ ligne.unite }}</td>
-                <td>{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} EUR</td>
+                <td>{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} TND</td>
                 <td style="max-width: 150px;">
                   <input
                     type="number"
@@ -51,7 +55,7 @@
                     {% if facture.statut == 'validee' %}disabled{% endif %}
                   >
                 </td>
-                <td>{{ ligne.montantLigne|number_format(2, ',', ' ') }} EUR</td>
+                <td>{{ ligne.montantLigne|number_format(2, ',', ' ') }} TND</td>
               </tr>
             {% else %}
               <tr>
@@ -62,7 +66,7 @@
           <tfoot>
             <tr class="fw-bold">
               <td colspan="4" class="text-end">Montant total</td>
-              <td>{{ facture.montantTotal|number_format(2, ',', ' ') }} EUR</td>
+              <td>{{ facture.montantTotal|number_format(2, ',', ' ') }} TND</td>
             </tr>
           </tfoot>
         </table>

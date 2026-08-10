@@ -8,7 +8,10 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title mb-0">Historique des factures — {{ projet.nom }} ({{ annee }})</h5>
-      <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm">Retour au projet</a>
+      <div class="d-flex gap-2">
+        <a href="{{ path('app_admin_offre_import', {id: projet.id}) }}" class="btn btn-outline-primary btn-sm">Offre financière</a>
+        <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm">Retour au projet</a>
+      </div>
     </div>
 
     <div class="row g-4 p-4">
@@ -25,7 +28,7 @@
                 {% else %}
                   <span class="badge bg-label-warning mb-2">Brouillon</span>
                 {% endif %}
-                <p class="mb-2 fw-medium">{{ facture.montantTotal|number_format(2, ',', ' ') }} EUR</p>
+                <p class="mb-2 fw-medium">{{ facture.montantTotal|number_format(2, ',', ' ') }} TND</p>
                 <a href="{{ path('app_admin_facture_show', {id: projet.id, annee: annee, mois: i}) }}" class="btn btn-sm btn-outline-primary w-100">
                   Consulter
                 </a>

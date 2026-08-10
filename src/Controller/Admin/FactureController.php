@@ -7,6 +7,8 @@ use App\Repository\FactureRepository;
 use App\Repository\ProjetRepository;
 use App\Service\FacturationService;
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,5 +90,42 @@ class FactureController extends AbstractController
         }
 
         return $this->redirectToRoute('app_admin_facture_show', ['id' => $projet->getId(), 'annee' => $annee, 'mois' => $mois]);
+    }
+
+    #[Route('/{annee}/{mois}/pdf', name: 'app_admin_facture_pdf', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['GET'])]
+    public function exporterPdf(Projet $projet, int $annee, int $mois, FacturationService $facturationService): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $facture = $facturationService->obtenirOuCreerFacture($projet, $mois, $annee);
+
+        $moisNoms = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+
+        $html = $this->renderView('admin/facture/pdf.html.twig', [
+            'projet' => $projet,
+            'facture' => $facture,
+            'mois' => $mois,
+            'annee' => $annee,
+            'moisNoms' => $moisNoms,
+        ]);
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $nomFichier = sprintf('facture_%s_%s_%s.pdf', $projet->getNumeroSo(), $mois, $annee);
+
+        return new Response(
+            $dompdf->output(),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="'.$nomFichier.'"',
+            ]
+        );
     }
 }

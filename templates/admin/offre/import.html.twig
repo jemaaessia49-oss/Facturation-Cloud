@@ -16,6 +16,7 @@
         <div class="mb-4">{{ form_row(form.fichier) }}</div>
 
         <button type="submit" class="btn btn-primary">Importer</button>
+        <a href="{{ path('app_admin_facture_historique', {id: projet.id}) }}" class="btn btn-outline-primary">Voir les factures</a>
         <a href="{{ path('app_admin_projet_edit', {id: projet.id}) }}" class="btn btn-outline-secondary">Annuler</a>
       {{ form_end(form) }}
     </div>

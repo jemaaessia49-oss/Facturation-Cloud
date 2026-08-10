@@ -1,0 +1,50 @@
+{% extends 'layouts/admin.html.twig' %}
+
+{% block title %}Liste des factures{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Liste des factures</h5>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Projet</th>
+            <th>Mois</th>
+            <th>Année</th>
+            <th>Statut</th>
+            <th>Montant</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for facture in factures %}
+            <tr>
+              <td>{{ facture.projet.nom }}</td>
+              <td>{{ facture.mois }}</td>
+              <td>{{ facture.annee }}</td>
+              <td>
+                {% if facture.statut == 'validee' %}
+                  <span class="badge bg-label-success">Validee</span>
+                {% else %}
+                  <span class="badge bg-label-warning">Brouillon</span>
+                {% endif %}
+              </td>
+              <td>{{ facture.montantTotal|number_format(2, ',', ' ') }} TND</td>
+              <td class="text-end">
+                <a href="{{ path('app_admin_facture_show', {id: facture.projet.id, annee: facture.annee, mois: facture.mois}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-body-secondary py-4">Aucune facture disponible</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

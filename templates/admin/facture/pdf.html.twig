@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 30px; }
+        h1 { font-size: 20px; color: #444; }
+        .info-table { width: 100%; margin-bottom: 20px; }
+        .info-table td { padding: 4px 0; }
+        table.lignes { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table.lignes th { background-color: #f0f0f0; text-align: left; padding: 8px; border-bottom: 2px solid #ddd; }
+        table.lignes td { padding: 8px; border-bottom: 1px solid #eee; }
+        .text-right { text-align: right; }
+        .total-row td { font-weight: bold; font-size: 14px; border-top: 2px solid #444; }
+        .statut { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; }
+        .statut-validee { background-color: #d4edda; color: #155724; }
+        .statut-brouillon { background-color: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Facturation Cloud</h1>
+            <p>{{ projet.societe.nom }}</p>
+        </div>
+        <div>
+            <p><strong>Facture</strong><br>{{ moisNoms[mois - 1] }} {{ annee }}</p>
+        </div>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td><strong>Projet :</strong> {{ projet.nom }} ({{ projet.numeroSo }})</td>
+            <td class="text-right">
+                <span class="statut statut-{{ facture.statut }}">
+                    {{ facture.statut == 'validee' ? 'Validee' : 'Brouillon' }}
+                </span>
+            </td>
+        </tr>
+        {% if facture.dateValidation %}
+        <tr>
+            <td colspan="2">Validee le {{ facture.dateValidation|date('d/m/Y H:i') }}</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <table class="lignes">
+        <thead>
+            <tr>
+                <th>Ressource</th>
+                <th>Unite</th>
+                <th class="text-right">Prix unitaire</th>
+                <th class="text-right">Consommation</th>
+                <th class="text-right">Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ligne in facture.ligneFactures %}
+                <tr>
+                    <td>{{ ligne.ressource }}</td>
+                    <td>{{ ligne.unite }}</td>
+                    <td class="text-right">{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} TND</td>
+                    <td class="text-right">{{ ligne.quantiteReelle }}</td>
+                    <td class="text-right">{{ ligne.montantLigne|number_format(2, ',', ' ') }} TND</td>
+                </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="4" class="text-right">Montant total</td>
+                <td class="text-right">{{ facture.montantTotal|number_format(2, ',', ' ') }} TND</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
