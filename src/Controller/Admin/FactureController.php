@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Projet;
+use App\Repository\FactureRepository;
 use App\Repository\ProjetRepository;
 use App\Service\FacturationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,30 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/projets/{id}/factures')]
 class FactureController extends AbstractController
 {
+    #[Route('', name: 'app_admin_facture_historique', methods: ['GET'])]
+    public function historique(Projet $projet, FactureRepository $factureRepository): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $anneeActuelle = (int) date('Y');
+
+        $factures = $factureRepository->findBy(
+            ['projet' => $projet, 'annee' => $anneeActuelle],
+            ['mois' => 'ASC']
+        );
+
+        $facturesParMois = [];
+        foreach ($factures as $facture) {
+            $facturesParMois[$facture->getMois()] = $facture;
+        }
+
+        return $this->render('admin/facture/historique.html.twig', [
+            'projet' => $projet,
+            'annee' => $anneeActuelle,
+            'factures_par_mois' => $facturesParMois,
+        ]);
+    }
+
     #[Route('/{annee}/{mois}', name: 'app_admin_facture_show', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['GET', 'POST'])]
     public function show(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService, EntityManagerInterface $em): Response
     {
