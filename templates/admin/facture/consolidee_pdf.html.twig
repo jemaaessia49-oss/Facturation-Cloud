@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #333; }
+        h1 { font-size: 18px; color: #444; margin-bottom: 4px; }
+        h2 { font-size: 13px; color: #555; margin-top: 20px; margin-bottom: 6px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+        table.lignes { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+        table.lignes th { background-color: #f0f0f0; text-align: left; padding: 5px; border-bottom: 1px solid #ddd; }
+        table.lignes td { padding: 5px; border-bottom: 1px solid #eee; }
+        .text-right { text-align: right; }
+        .sous-total { text-align: right; font-weight: bold; margin-bottom: 15px; }
+        .total-general { text-align: right; font-size: 15px; font-weight: bold; margin-top: 20px; border-top: 2px solid #444; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Facture consolidee — {{ societe.nom }}</h1>
+    <p>{{ moisNoms[mois - 1] }} {{ annee }}</p>
+
+    {% for item in projets_avec_facture %}
+        <h2>{{ item.projet.nom }} ({{ item.projet.numeroSo }})</h2>
+
+        {% if item.facture %}
+            <table class="lignes">
+                <thead>
+                    <tr>
+                        <th>Ressource</th>
+                        <th>Unite</th>
+                        <th class="text-right">Prix unitaire</th>
+                        <th class="text-right">Consommation</th>
+                        <th class="text-right">Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in item.facture.ligneFactures %}
+                        <tr>
+                            <td>{{ ligne.ressource }}</td>
+                            <td>{{ ligne.unite }}</td>
+                            <td class="text-right">{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} EUR</td>
+                            <td class="text-right">{{ ligne.quantiteReelle }}</td>
+                            <td class="text-right">{{ ligne.montantLigne|number_format(2, ',', ' ') }} EUR</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="sous-total">Sous-total : {{ item.facture.montantTotal|number_format(2, ',', ' ') }} EUR</p>
+        {% else %}
+            <p>Aucune facture pour ce mois</p>
+        {% endif %}
+    {% endfor %}
+
+    <p class="total-general">Montant total general : {{ montant_total_general|number_format(2, ',', ' ') }} EUR</p>
+</body>
+</html>

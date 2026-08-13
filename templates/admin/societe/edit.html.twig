@@ -3,7 +3,7 @@
 {% block title %}Modifier {{ societe.nom }}{% endblock %}
 
 {% block content %}
-  <div class="card">
+  <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title mb-0">Modifier la société</h5>
     </div>
@@ -11,10 +11,21 @@
       {{ form_start(form) }}
         <div class="mb-4">{{ form_row(form.nom) }}</div>
         <div class="mb-4">{{ form_row(form.informationsGenerales) }}</div>
-
         <button type="submit" class="btn btn-primary">Enregistrer</button>
         <a href="{{ path('app_admin_societe_index') }}" class="btn btn-outline-secondary">Annuler</a>
       {{ form_end(form) }}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-1">Facture consolidee</h5>
+        <p class="mb-0 text-body-secondary">Regrouper toutes les factures des projets (SO) de cette societe pour un mois donne</p>
+      </div>
+      <a href="{{ path('app_admin_facture_consolidee', {id: societe.id, annee: 'now'|date('Y'), mois: 'now'|date('n')}) }}" class="btn btn-primary">
+        <i class="icon-base bx bx-layer me-1"></i> Voir la facture consolidee du mois
+      </a>
     </div>
   </div>
 {% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layouts/admin.html.twig" %}
+
+{% block title %}Facture consolidee - {{ societe.nom }}{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Facture consolidee — {{ societe.nom }} — {{ moisNoms[mois - 1] }} {{ annee }}</h5>
+      <div class="d-flex gap-2">
+        <a href="{{ path('app_admin_facture_consolidee_pdf', {id: societe.id, annee: annee, mois: mois}) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+          <i class="icon-base bx bx-download me-1"></i> Telecharger le PDF
+        </a>
+        <a href="{{ path('app_admin_societe_edit', {id: societe.id}) }}" class="btn btn-outline-secondary btn-sm">Retour a la societe</a>
+      </div>
+    </div>
+
+    {% for item in projets_avec_facture %}
+      <div class="card-body border-bottom">
+        <h6 class="mb-2">{{ item.projet.nom }} ({{ item.projet.numeroSo }})</h6>
+
+        {% if item.facture %}
+          <div class="table-responsive text-nowrap">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>Ressource</th>
+                  <th>Unite</th>
+                  <th>Prix unitaire</th>
+                  <th>Consommation</th>
+                  <th>Montant</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ligne in item.facture.ligneFactures %}
+                  <tr>
+                    <td>{{ ligne.ressource }}</td>
+                    <td>{{ ligne.unite }}</td>
+                    <td>{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} EUR</td>
+                    <td>{{ ligne.quantiteReelle }}</td>
+                    <td>{{ ligne.montantLigne|number_format(2, ',', ' ') }} EUR</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <p class="text-end fw-bold mb-0">Sous-total : {{ item.facture.montantTotal|number_format(2, ',', ' ') }} EUR</p>
+        {% else %}
+          <p class="text-body-secondary mb-0">Aucune facture pour ce mois</p>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="card-body">
+        <p class="text-center text-body-secondary py-4 mb-0">Cette societe n'a aucun projet</p>
+      </div>
+    {% endfor %}
+
+    <div class="card-body">
+      <h5 class="text-end mb-0">Montant total general : {{ montant_total_general|number_format(2, ',', ' ') }} EUR</h5>
+    </div>
+  </div>
+{% endblock %}
