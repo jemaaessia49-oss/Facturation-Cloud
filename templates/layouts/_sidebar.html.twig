@@ -3,14 +3,11 @@
     <a href="{{ path('app_dashboard') }}" class="app-brand-link">
       <span class="app-brand-text demo menu-text fw-bold ms-2">Facturation</span>
     </a>
-
     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
       <i class="icon-base bx bx-chevron-left"></i>
     </a>
   </div>
-
   <div class="menu-inner-shadow"></div>
-
   <ul class="menu-inner py-1">
     <li class="menu-item {% if app.request.attributes.get('_route') == 'app_dashboard' %}active open{% endif %}">
       <a href="{{ path('app_dashboard') }}" class="menu-link">
@@ -18,25 +15,21 @@
         <div>Dashboard</div>
       </a>
     </li>
-
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">Gestion</span>
     </li>
-
     <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_societe' %}active open{% endif %}">
       <a href="{{ path('app_admin_societe_index') }}" class="menu-link">
         <i class="menu-icon icon-base bx bx-buildings"></i>
         <div>Societes</div>
       </a>
     </li>
-
     <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_projet' %}active open{% endif %}">
       <a href="{{ path('app_admin_projet_index') }}" class="menu-link">
         <i class="menu-icon icon-base bx bx-briefcase"></i>
         <div>Projets</div>
       </a>
     </li>
-
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon icon-base bx bx-file"></i>
@@ -50,21 +43,12 @@
         </li>
       </ul>
     </li>
-
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
+    <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_recherche_facture' %}active open{% endif %}">
+      <a href="{{ path('app_admin_recherche_factures') }}" class="menu-link">
         <i class="menu-icon icon-base bx bx-receipt"></i>
         <div>Factures</div>
       </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="javascript:void(0);" class="menu-link">
-            <div>Liste des factures</div>
-          </a>
-        </li>
-      </ul>
     </li>
-
     {% if is_granted('ROLE_ADMIN') %}
       <li class="menu-header small text-uppercase">
         <span class="menu-header-text">Administration</span>
