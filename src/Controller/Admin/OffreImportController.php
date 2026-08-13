@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Projet;
 use App\Form\OffreImportType;
 use App\Service\OffreImportService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class OffreImportController extends AbstractController
 {
     #[Route('/importer', name: 'app_admin_offre_import', methods: ['GET', 'POST'])]
-    public function import(Projet $projet, Request $request, OffreImportService $importService): Response
+    public function import(Projet $projet, Request $request, OffreImportService $importService, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -25,10 +26,16 @@ class OffreImportController extends AbstractController
             $fichier = $form->get('fichier')->getData();
 
             try {
-                $offre = $importService->importDepuisExcel($projet, $fichier);
+                $offre = $importService->importer($projet, $fichier);
+
+                $nombreLignes = (int) $em->getConnection()->fetchOne(
+                    'SELECT COUNT(*) FROM ligne_offre WHERE offre_financiere_id = ?',
+                    [$offre->getId()]
+                );
+
                 $this->addFlash('success', sprintf(
                     'Offre financiere importee avec succes (%d lignes, version %d).',
-                    count($offre->getLigneOffres()),
+                    $nombreLignes,
                     $offre->getVersion()
                 ));
             } catch (\Exception $e) {

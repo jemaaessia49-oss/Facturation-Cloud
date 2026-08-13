@@ -14,7 +14,7 @@ class OffreImportType extends AbstractType
     {
         $builder
             ->add('fichier', FileType::class, [
-                'label' => 'Fichier Excel de l\'offre financiere',
+                'label' => 'Fichier de l\'offre financiere (Excel ou PDF)',
                 'mapped' => false,
                 'required' => true,
                 'constraints' => [
@@ -23,8 +23,9 @@ class OffreImportType extends AbstractType
                         'mimeTypes' => [
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'application/vnd.ms-excel',
+                            'application/pdf',
                         ],
-                        'mimeTypesMessage' => 'Merci d\'importer un fichier Excel valide (.xlsx ou .xls)',
+                        'mimeTypesMessage' => 'Merci d\'importer un fichier Excel (.xlsx) ou PDF valide',
                     ]),
                 ],
             ])
