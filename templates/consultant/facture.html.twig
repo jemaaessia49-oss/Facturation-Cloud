@@ -1,0 +1,85 @@
+{% extends "layouts/consultant.html.twig" %}
+
+{% set moisNoms = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'] %}
+
+{% block title %}Facture {{ moisNoms[mois - 1] }} {{ annee }} - {{ projet.nom }}{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="card-title mb-0">Facture {{ moisNoms[mois - 1] }} {{ annee }} — {{ projet.nom }}</h5>
+        <small class="text-body-secondary">
+          Statut :
+          {% if facture.statut == 'validee' %}
+            <span class="badge bg-label-success">Validee le {{ facture.dateValidation|date('d/m/Y H:i') }}</span>
+          {% else %}
+            <span class="badge bg-label-warning">Brouillon</span>
+          {% endif %}
+        </small>
+      </div>
+      <a href="{{ path('app_consultant_index') }}" class="btn btn-outline-secondary btn-sm">Retour a mes projets</a>
+    </div>
+
+    <form method="post">
+      <div class="table-responsive text-nowrap">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Ressource</th>
+              <th>Unite</th>
+              <th>Prix unitaire</th>
+              <th>Consommation reelle</th>
+              <th>Montant</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            {% for ligne in facture.ligneFactures %}
+              <tr>
+                <td>{{ ligne.ressource }}</td>
+                <td>{{ ligne.unite }}</td>
+                <td>{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} EUR</td>
+                <td style="max-width: 150px;">
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="quantite[{{ ligne.id }}]"
+                    value="{{ ligne.quantiteReelle }}"
+                    class="form-control form-control-sm"
+                    {% if facture.statut == 'validee' %}disabled{% endif %}
+                  >
+                </td>
+                <td>{{ ligne.montantLigne|number_format(2, ',', ' ') }} EUR</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-body-secondary py-4">Aucune ligne — aucune offre financiere disponible pour ce projet</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="fw-bold">
+              <td colspan="4" class="text-end">Montant total</td>
+              <td>{{ facture.montantTotal|number_format(2, ',', ' ') }} EUR</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {% if facture.statut != 'validee' %}
+        <div class="card-body d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Enregistrer les consommations</button>
+        </div>
+      {% endif %}
+    </form>
+
+    {% if facture.statut != 'validee' %}
+      <div class="card-body pt-0">
+        <form method="post" action="{{ path('app_consultant_facture_valider', {id: projet.id, annee: annee, mois: mois}) }}" onsubmit="return confirm('Valider definitivement cette facture ? Elle ne pourra plus etre modifiee.');">
+          <input type="hidden" name="_token" value="{{ csrf_token('valider_facture_' ~ facture.id) }}">
+          <button type="submit" class="btn btn-success">Valider la facture</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

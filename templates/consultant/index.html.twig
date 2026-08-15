@@ -1,0 +1,47 @@
+{% extends "layouts/consultant.html.twig" %}
+
+{% block title %}Mes projets{% endblock %}
+
+{% block content %}
+  <h4 class="mb-1">Bonjour {{ app.user.prenom }} 👋</h4>
+  <p class="text-body-secondary mb-6">Voici les projets dont vous avez la charge</p>
+
+  <div class="row g-6">
+    {% for projet in projets %}
+      <div class="col-lg-4 col-sm-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h5 class="card-title mb-1">{{ projet.nom }}</h5>
+                <small class="text-body-secondary">{{ projet.numeroSo }} — {{ projet.societe.nom }}</small>
+              </div>
+              <span class="badge bg-label-info">{{ projet.statut }}</span>
+            </div>
+            <div class="d-flex flex-column gap-2">
+              <a href="{{ path('app_consultant_facture_show', {id: projet.id, annee: 'now'|date('Y'), mois: 'now'|date('n')}) }}" class="btn btn-primary w-100">
+                <i class="icon-base bx bx-receipt me-1"></i> Facturer ce mois
+              </a>
+              <div class="d-flex gap-2">
+                <a href="{{ path('app_consultant_facture_historique', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm w-100">
+                  <i class="icon-base bx bx-history me-1"></i> Historique
+                </a>
+                <a href="{{ path('app_consultant_offre_import', {id: projet.id}) }}" class="btn btn-outline-secondary btn-sm w-100">
+                  <i class="icon-base bx bx-upload me-1"></i> Offre financiere
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body text-center py-6 text-body-secondary">
+            Aucun projet ne vous est assigne pour le moment.
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

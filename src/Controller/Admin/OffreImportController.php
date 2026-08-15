@@ -17,7 +17,7 @@ class OffreImportController extends AbstractController
     #[Route('/importer', name: 'app_admin_offre_import', methods: ['GET', 'POST'])]
     public function import(Projet $projet, Request $request, OffreImportService $importService, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
         $form = $this->createForm(OffreImportType::class);
         $form->handleRequest($request);

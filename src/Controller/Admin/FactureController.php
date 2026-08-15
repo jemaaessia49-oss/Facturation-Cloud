@@ -20,7 +20,7 @@ class FactureController extends AbstractController
     #[Route('', name: 'app_admin_facture_historique', methods: ['GET'])]
     public function historique(Projet $projet, FactureRepository $factureRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
         $anneeActuelle = (int) date('Y');
 
@@ -44,7 +44,7 @@ class FactureController extends AbstractController
     #[Route('/{annee}/{mois}', name: 'app_admin_facture_show', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['GET', 'POST'])]
     public function show(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
         $facture = $facturationService->obtenirOuCreerFacture($projet, $mois, $annee);
 
@@ -80,7 +80,7 @@ class FactureController extends AbstractController
     #[Route('/{annee}/{mois}/valider', name: 'app_admin_facture_valider', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['POST'])]
     public function valider(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
         $facture = $facturationService->obtenirOuCreerFacture($projet, $mois, $annee);
 
@@ -95,7 +95,7 @@ class FactureController extends AbstractController
     #[Route('/{annee}/{mois}/pdf', name: 'app_admin_facture_pdf', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['GET'])]
     public function exporterPdf(Projet $projet, int $annee, int $mois, FacturationService $facturationService): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
         $facture = $facturationService->obtenirOuCreerFacture($projet, $mois, $annee);
 

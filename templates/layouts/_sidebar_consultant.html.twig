@@ -1,0 +1,19 @@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+  <div class="app-brand demo">
+    <a href="{{ path('app_consultant_index') }}" class="app-brand-link">
+      <span class="app-brand-text demo menu-text fw-bold ms-2">Facturation</span>
+    </a>
+    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+      <i class="icon-base bx bx-chevron-left"></i>
+    </a>
+  </div>
+  <div class="menu-inner-shadow"></div>
+  <ul class="menu-inner py-1">
+    <li class="menu-item {% if app.request.attributes.get('_route') == 'app_consultant_index' %}active open{% endif %}">
+      <a href="{{ path('app_consultant_index') }}" class="menu-link">
+        <i class="menu-icon icon-base bx bx-briefcase"></i>
+        <div>Mes projets</div>
+      </a>
+    </li>
+  </ul>
+</aside>
