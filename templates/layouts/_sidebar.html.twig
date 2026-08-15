@@ -30,18 +30,11 @@
         <div>Projets</div>
       </a>
     </li>
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
+    <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_offre' %}active open{% endif %}">
+      <a href="{{ path('app_admin_offre_index') }}" class="menu-link">
         <i class="menu-icon icon-base bx bx-file"></i>
         <div>Offres financieres</div>
       </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="javascript:void(0);" class="menu-link">
-            <div>Liste des offres</div>
-          </a>
-        </li>
-      </ul>
     </li>
     <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_recherche_facture' %}active open{% endif %}">
       <a href="{{ path('app_admin_recherche_factures') }}" class="menu-link">
@@ -57,6 +50,12 @@
         <a href="{{ path('app_admin_user_index') }}" class="menu-link">
           <i class="menu-icon icon-base bx bx-user"></i>
           <div>Utilisateurs</div>
+        </a>
+      </li>
+      <li class="menu-item {% if app.request.attributes.get('_route') starts with 'app_admin_journal' %}active open{% endif %}">
+        <a href="{{ path('app_admin_journal_index') }}" class="menu-link">
+          <i class="menu-icon icon-base bx bx-list-check"></i>
+          <div>Journal</div>
         </a>
       </li>
     {% endif %}

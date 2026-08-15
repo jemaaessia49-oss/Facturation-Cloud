@@ -1,0 +1,47 @@
+{% extends "layouts/admin.html.twig" %}
+
+{% block title %}Offres financieres{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Offres financieres actives</h5>
+    </div>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Projet</th>
+            <th>Societe</th>
+            <th>Version</th>
+            <th>Date d'import</th>
+            <th>Fichier source</th>
+            <th>Lignes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for offre in offres %}
+            <tr>
+              <td>{{ offre.projet.nom }} ({{ offre.projet.numeroSo }})</td>
+              <td>{{ offre.projet.societe.nom }}</td>
+              <td><span class="badge bg-label-info">v{{ offre.version }}</span></td>
+              <td>{{ offre.dateImport|date('d/m/Y H:i') }}</td>
+              <td>{{ offre.fichierSource }}</td>
+              <td>{{ offre.ligneOffres|length }}</td>
+              <td>
+                <a href="{{ path('app_admin_projet_edit', {id: offre.projet.id}) }}" class="btn btn-sm btn-outline-primary">
+                  Voir le projet
+                </a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-body-secondary py-4">Aucune offre financiere importee</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

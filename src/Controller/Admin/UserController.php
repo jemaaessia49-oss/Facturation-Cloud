@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\ActionLogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/nouveau', name: 'app_admin_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function new(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -39,9 +40,10 @@ class UserController extends AbstractController
             $user->setPassword(
                 $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData())
             );
-
             $em->persist($user);
             $em->flush();
+
+            $actionLogService->enregistrer('Creation utilisateur', 'User', $user->getId());
 
             $this->addFlash('success', 'Utilisateur créé avec succès.');
 
@@ -54,12 +56,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/modifier', name: 'app_admin_user_edit', methods: ['GET', 'POST'])]
-    public function edit(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
+    public function edit(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $currentRole = $user->getRoles()[0] ?? 'ROLE_CONSULTANT';
-
         $form = $this->createForm(UserType::class, $user, [
             'is_edit' => true,
             'current_role' => $currentRole,
@@ -68,15 +69,15 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setRoles([$form->get('role')->getData()]);
-
             $plainPassword = $form->get('plainPassword')->getData();
             if (!empty($plainPassword)) {
                 $user->setPassword(
                     $passwordHasher->hashPassword($user, $plainPassword)
                 );
             }
-
             $em->flush();
+
+            $actionLogService->enregistrer('Modification utilisateur', 'User', $user->getId());
 
             $this->addFlash('success', 'Utilisateur modifié avec succès.');
 
@@ -90,13 +91,18 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/supprimer', name: 'app_admin_user_delete', methods: ['POST'])]
-    public function delete(User $user, Request $request, EntityManagerInterface $em): Response
+    public function delete(User $user, Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         if ($this->isCsrfTokenValid('delete_user_'.$user->getId(), $request->getPayload()->getString('_token'))) {
+            $userId = $user->getId();
+
             $em->remove($user);
             $em->flush();
+
+            $actionLogService->enregistrer('Suppression utilisateur', 'User', $userId);
+
             $this->addFlash('success', 'Utilisateur supprimé.');
         }
 

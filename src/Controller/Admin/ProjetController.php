@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Projet;
 use App\Form\ProjetType;
 use App\Repository\ProjetRepository;
+use App\Service\ActionLogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/nouveau', name: 'app_admin_projet_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -36,6 +37,8 @@ class ProjetController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($projet);
             $em->flush();
+
+            $actionLogService->enregistrer('Creation projet', 'Projet', $projet->getId());
 
             $this->addFlash('success', 'Projet cree avec succes.');
 
@@ -48,7 +51,7 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/modifier', name: 'app_admin_projet_edit', methods: ['GET', 'POST'])]
-    public function edit(Projet $projet, Request $request, EntityManagerInterface $em): Response
+    public function edit(Projet $projet, Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -57,6 +60,8 @@ class ProjetController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+
+            $actionLogService->enregistrer('Modification projet', 'Projet', $projet->getId());
 
             $this->addFlash('success', 'Projet modifie avec succes.');
 
@@ -79,13 +84,18 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/supprimer', name: 'app_admin_projet_delete', methods: ['POST'])]
-    public function delete(Projet $projet, Request $request, EntityManagerInterface $em): Response
+    public function delete(Projet $projet, Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         if ($this->isCsrfTokenValid('delete_projet_'.$projet->getId(), $request->getPayload()->getString('_token'))) {
+            $projetId = $projet->getId();
+
             $em->remove($projet);
             $em->flush();
+
+            $actionLogService->enregistrer('Suppression projet', 'Projet', $projetId);
+
             $this->addFlash('success', 'Projet supprime.');
         }
 

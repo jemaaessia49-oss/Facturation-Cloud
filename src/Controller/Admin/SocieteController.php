@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Societe;
 use App\Form\SocieteType;
 use App\Repository\SocieteRepository;
+use App\Service\ActionLogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class SocieteController extends AbstractController
     }
 
     #[Route('/nouveau', name: 'app_admin_societe_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -36,6 +37,8 @@ class SocieteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($societe);
             $em->flush();
+
+            $actionLogService->enregistrer('Creation societe', 'Societe', $societe->getId());
 
             $this->addFlash('success', 'Société créée avec succès.');
 
@@ -48,7 +51,7 @@ class SocieteController extends AbstractController
     }
 
     #[Route('/{id}/modifier', name: 'app_admin_societe_edit', methods: ['GET', 'POST'])]
-    public function edit(Societe $societe, Request $request, EntityManagerInterface $em): Response
+    public function edit(Societe $societe, Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -57,6 +60,8 @@ class SocieteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+
+            $actionLogService->enregistrer('Modification societe', 'Societe', $societe->getId());
 
             $this->addFlash('success', 'Société modifiée avec succès.');
 
@@ -70,13 +75,18 @@ class SocieteController extends AbstractController
     }
 
     #[Route('/{id}/supprimer', name: 'app_admin_societe_delete', methods: ['POST'])]
-    public function delete(Societe $societe, Request $request, EntityManagerInterface $em): Response
+    public function delete(Societe $societe, Request $request, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         if ($this->isCsrfTokenValid('delete_societe_'.$societe->getId(), $request->getPayload()->getString('_token'))) {
+            $societeId = $societe->getId();
+
             $em->remove($societe);
             $em->flush();
+
+            $actionLogService->enregistrer('Suppression societe', 'Societe', $societeId);
+
             $this->addFlash('success', 'Société supprimée.');
         }
 

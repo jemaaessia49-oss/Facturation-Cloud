@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Projet;
 use App\Form\OffreImportType;
+use App\Service\ActionLogService;
 use App\Service\OffreImportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class OffreImportController extends AbstractController
 {
     #[Route('/importer', name: 'app_admin_offre_import', methods: ['GET', 'POST'])]
-    public function import(Projet $projet, Request $request, OffreImportService $importService, EntityManagerInterface $em): Response
+    public function import(Projet $projet, Request $request, OffreImportService $importService, EntityManagerInterface $em, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
@@ -32,6 +33,8 @@ class OffreImportController extends AbstractController
                     'SELECT COUNT(*) FROM ligne_offre WHERE offre_financiere_id = ?',
                     [$offre->getId()]
                 );
+
+                $actionLogService->enregistrer('Import offre financiere', 'OffreFinanciere', $offre->getId());
 
                 $this->addFlash('success', sprintf(
                     'Offre financiere importee avec succes (%d lignes, version %d).',

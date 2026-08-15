@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Projet;
 use App\Repository\FactureRepository;
 use App\Repository\ProjetRepository;
+use App\Service\ActionLogService;
 use App\Service\FacturationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
@@ -78,7 +79,7 @@ class FactureController extends AbstractController
     }
 
     #[Route('/{annee}/{mois}/valider', name: 'app_admin_facture_valider', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['POST'])]
-    public function valider(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService): Response
+    public function valider(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService, ActionLogService $actionLogService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
@@ -86,6 +87,7 @@ class FactureController extends AbstractController
 
         if ($this->isCsrfTokenValid('valider_facture_'.$facture->getId(), $request->getPayload()->getString('_token'))) {
             $facturationService->validerFacture($facture);
+            $actionLogService->enregistrer('Validation facture', 'Facture', $facture->getId());
             $this->addFlash('success', 'Facture validee avec succes.');
         }
 
