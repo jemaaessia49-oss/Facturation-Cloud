@@ -6,6 +6,24 @@
   <h4 class="mb-1">Bonjour {{ app.user.prenom }} 👋</h4>
   <p class="text-body-secondary mb-6">Voici les projets dont vous avez la charge</p>
 
+  {% if projets_non_valides|length > 0 %}
+    <div class="alert alert-warning mb-6" role="alert">
+      <div class="d-flex align-items-center mb-2">
+        <i class="icon-base bx bx-bell icon-md me-2"></i>
+        <div>
+          <strong>{{ projets_non_valides|length }}</strong> facture{{ projets_non_valides|length > 1 ? 's' : '' }} de <strong>{{ mois_actuel_nom }}</strong> reste{{ projets_non_valides|length > 1 ? 'nt' : '' }} a valider :
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        {% for projet in projets_non_valides %}
+          <a href="{{ path('app_consultant_facture_show', {id: projet.id, annee: annee_actuelle, mois: mois_actuel}) }}" class="btn btn-sm btn-warning">
+            {{ projet.nom }} <i class="icon-base bx bx-chevron-right"></i>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
   <div class="row g-6">
     {% for projet in projets %}
       <div class="col-lg-4 col-sm-6">

@@ -13,12 +13,36 @@ use Symfony\Component\Routing\Attribute\Route;
 class ConsultantController extends AbstractController
 {
     #[Route('/consultant', name: 'app_consultant_index')]
-    public function index(ProjetRepository $projetRepository): Response
+    public function index(ProjetRepository $projetRepository, \App\Repository\FactureRepository $factureRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_CONSULTANT');
 
+        $projets = $projetRepository->findAll();
+
+        $moisActuel = (int) date('n');
+        $anneeActuelle = (int) date('Y');
+
+        $projetsNonValides = [];
+        foreach ($projets as $projet) {
+            $facture = $factureRepository->findOneBy([
+                'projet' => $projet,
+                'mois' => $moisActuel,
+                'annee' => $anneeActuelle,
+            ]);
+
+            if ($facture === null || $facture->getStatut() !== 'validee') {
+                $projetsNonValides[] = $projet;
+            }
+        }
+
+        $moisNoms = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+
         return $this->render('consultant/index.html.twig', [
-            'projets' => $projetRepository->findAll(),
+            'projets' => $projets,
+            'projets_non_valides' => $projetsNonValides,
+            'mois_actuel_nom' => $moisNoms[$moisActuel - 1],
+            'mois_actuel' => $moisActuel,
+            'annee_actuelle' => $anneeActuelle,
         ]);
     }
 
@@ -58,6 +82,7 @@ class ConsultantController extends AbstractController
             'projet' => $projet,
         ]);
     }
+
     #[Route('/consultant/projets/{id}/factures', name: 'app_consultant_facture_historique', methods: ['GET'])]
     public function historique(Projet $projet, \App\Repository\FactureRepository $factureRepository): Response
     {
@@ -81,6 +106,7 @@ class ConsultantController extends AbstractController
             'factures_par_mois' => $facturesParMois,
         ]);
     }
+
     #[Route('/consultant/projets/{id}/factures/{annee}/{mois}', name: 'app_consultant_facture_show', requirements: ['mois' => '\d+', 'annee' => '\d+'], methods: ['GET', 'POST'])]
     public function facture(Projet $projet, int $annee, int $mois, Request $request, FacturationService $facturationService): Response
     {
@@ -132,5 +158,3 @@ class ConsultantController extends AbstractController
         return $this->redirectToRoute('app_consultant_facture_show', ['id' => $projet->getId(), 'annee' => $annee, 'mois' => $mois]);
     }
 }
-
-
